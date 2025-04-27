@@ -1,0 +1,526 @@
+<div class="recommendations-screen">
+  <div class="recommendations-container">
+    <div class="header" *ngIf="vistaActual === 'inicio'">PASOS A SEGUIR</div>
+    <div class="header" *ngIf="vistaActual === 'identificar'">IDENTIFICAR</div>
+    <div class="header" *ngIf="vistaActual === 'proteger'">PROTEGER</div>
+    <div class="header" *ngIf="vistaActual === 'detectar'">DETECTAR</div>
+    <div class="header" *ngIf="vistaActual === 'responder'">RESPONDER</div>
+    <div class="header" *ngIf="vistaActual === 'recuperar'">RECUPERAR</div>
+    <div class="recommendations-content">
+      <!-- VISTA INICIO -->
+      <ng-container *ngIf="vistaActual === 'inicio'">
+        <div class="guide">
+          <p>
+            Hemos identificado áreas clave de mejora en la seguridad de tu
+            empresa. A continuación, te presentamos recomendaciones
+            personalizadas y pasos prácticos para fortalecer tu nivel de madurez
+            en seguridad de la información.
+          </p>
+        </div>
+
+        <div class="functions-grid">
+          <div class="top-row">
+            <a class="function-button" (click)="cambiarVista('identificar')">
+              <div class="icon-circle">
+                <img src="/magnifier-icon.svg" alt="Ícono Identificar" />
+              </div>
+              <span>IDENTIFICAR</span>
+            </a>
+            <a class="function-button" (click)="cambiarVista('proteger')">
+              <div class="icon-circle">
+                <img src="/magnifier-icon.svg" alt="Ícono Proteger" />
+              </div>
+              <span>PROTEGER</span>
+            </a>
+            <a class="function-button" (click)="cambiarVista('detectar')">
+              <div class="icon-circle">
+                <img src="/magnifier-icon.svg" alt="Ícono Detectar" />
+              </div>
+              <span>DETECTAR</span>
+            </a>
+          </div>
+          <div class="bot-row">
+            <a class="function-button" (click)="cambiarVista('responder')">
+              <div class="icon-circle">
+                <img src="/magnifier-icon.svg" alt="Ícono Responder" />
+              </div>
+              <span>RESPONDER</span>
+            </a>
+            <a class="function-button" (click)="cambiarVista('recuperar')">
+              <div class="icon-circle">
+                <img src="/magnifier-icon.svg" alt="Ícono Recuperar" />
+              </div>
+              <span>RECUPERAR</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="pdf-export oculto">
+          <div class="pdf-title">ESTRATEGIAS POR FUNCIÓN</div>
+          <div *ngFor="let funcion of estrategiasPorFuncion" class="funcion-block">
+            <div class="funcion-header">
+              <img src="/magnifier-icon.svg"/>
+              <h3>{{ funcion.funcion }}</h3>
+            </div>
+            
+          
+            <div class="control-header">
+              <span class="control-header-title">Recomendación</span>
+              <span class="control-header-title prioridad">Prioridad</span>
+            </div>
+          
+            <div *ngFor="let rec of funcion.recomendaciones" class="control-row">
+              <div class="control-texto">
+                <div class="control-titulo">
+                  <img src="/check.svg" alt="check" />
+                  <strong>{{ rec.control }}</strong>
+                </div>
+                <div class="recomendacion-texto">
+                  {{ rec.texto }}
+                </div>
+              </div>
+              <div class="pdf-priority">
+                <div class="priority-badge" [ngClass]="rec.prioridad">
+                  ● {{ rec.prioridad }}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+
+        <div class="button-container">
+          <button (click)="descargarResultados()">DESCARGAR RESULTADOS</button>
+        </div>
+      </ng-container>
+
+      <!-- VISTA IDENTIFICAR -->
+      <ng-container *ngIf="vistaActual === 'identificar'">
+        <div class="priority-container">
+          <div
+            class="priority alta"
+            title="Controles críticos con bajo nivel de implementación. Requieren atención inmediata."
+            [class.active]="prioridadSeleccionada === 'alta'"
+            (click)="seleccionarPrioridad('alta')"
+          >
+            Prioridad Alta
+          </div>
+          <div
+            class="priority media"
+            title="Controles parcialmente implementados. Se recomienda mejorar su cobertura."
+            [class.active]="prioridadSeleccionada === 'media'"
+            (click)="seleccionarPrioridad('media')"
+          >
+            Prioridad Media
+          </div>
+          <div
+            class="priority baja"
+            title="Controles casi completos. Solo necesitan una revisión o ajuste menor."
+            [class.active]="prioridadSeleccionada === 'baja'"
+            (click)="seleccionarPrioridad('baja')"
+          >
+            Prioridad Baja
+          </div>
+        </div>
+
+        <div class="priority-legend">
+          <div class="legend-item alta">
+            <span class="dot"></span>
+            Controles críticos con bajo nivel de implementación. Requieren
+            atención inmediata.
+          </div>
+          <div class="legend-item media">
+            <span class="dot"></span>
+            Controles parcialmente implementados. Se recomienda mejorar su
+            cobertura.
+          </div>
+          <div class="legend-item baja">
+            <span class="dot"></span>
+            Controles casi completos. Solo necesitan una revisión o ajuste
+            menor.
+          </div>
+        </div>
+
+        <div class="recommendations-toggle">
+          <ng-container *ngFor="let rec of recomendacionesFiltradas">
+            <div class="recommendation-item">
+              <div
+                class="recommendation-header"
+                (click)="alternarDesglose(rec.control + '__' + rec.funcion)"
+              >
+                <img
+                  src="/arrow.svg"
+                  class="arrow-icon"
+                  [class.abierta]="
+                    desplegarControl[rec.control + '__' + rec.funcion]
+                  "
+                  alt="Flecha"
+                />
+                <h3>
+                  <strong>{{ rec.control }}</strong>
+                  <!-- <span>: {{ rec.categoriaNIST }}</span> -->
+                </h3>
+              </div>
+
+              <ul
+                class="recommendation-list"
+                *ngIf="desplegarControl[rec.control + '__' + rec.funcion]"
+              >
+                <li>
+                  <img src="/check.svg" class="check-icon" alt="check" />
+                  {{ rec.texto }}
+                </li>
+              </ul>
+            </div>
+          </ng-container>
+        </div>
+
+        <div class="back-button" (click)="cambiarVista('inicio')">
+          ← Volver al inicio
+        </div>
+      </ng-container>
+
+      <!-- VISTA PROTEGER -->
+      <ng-container *ngIf="vistaActual === 'proteger'">
+        <div class="priority-container">
+          <div
+            class="priority alta"
+            title="Controles críticos con bajo nivel de implementación. Requieren atención inmediata."
+            [class.active]="prioridadSeleccionada === 'alta'"
+            (click)="seleccionarPrioridad('alta')"
+          >
+            Prioridad Alta
+          </div>
+          <div
+            class="priority media"
+            title="Controles parcialmente implementados. Se recomienda mejorar su cobertura."
+            [class.active]="prioridadSeleccionada === 'media'"
+            (click)="seleccionarPrioridad('media')"
+          >
+            Prioridad Media
+          </div>
+          <div
+            class="priority baja"
+            title="Controles casi completos. Solo necesitan una revisión o ajuste menor."
+            [class.active]="prioridadSeleccionada === 'baja'"
+            (click)="seleccionarPrioridad('baja')"
+          >
+            Prioridad Baja
+          </div>
+        </div>
+
+        <div class="priority-legend">
+          <div class="legend-item alta">
+            <span class="dot"></span>
+            Controles críticos con bajo nivel de implementación. Requieren
+            atención inmediata.
+          </div>
+          <div class="legend-item media">
+            <span class="dot"></span>
+            Controles parcialmente implementados. Se recomienda mejorar su
+            cobertura.
+          </div>
+          <div class="legend-item baja">
+            <span class="dot"></span>
+            Controles casi completos. Solo necesitan una revisión o ajuste
+            menor.
+          </div>
+        </div>
+        <div class="recommendations-toggle">
+          <ng-container *ngFor="let rec of recomendacionesFiltradas">
+            <div class="recommendation-item">
+              <div
+                class="recommendation-header"
+                (click)="alternarDesglose(rec.control + '__' + rec.funcion)"
+              >
+                <img
+                  src="/arrow.svg"
+                  class="arrow-icon"
+                  [class.abierta]="
+                    desplegarControl[rec.control + '__' + rec.funcion]
+                  "
+                  alt="Flecha"
+                />
+                <h3>
+                  <strong>{{ rec.control }}</strong>
+                  <!-- <span>: {{ rec.categoriaNIST }}</span> -->
+                </h3>
+              </div>
+
+              <ul
+                class="recommendation-list"
+                *ngIf="desplegarControl[rec.control + '__' + rec.funcion]"
+              >
+                <li>
+                  <img src="/check.svg" class="check-icon" alt="check" />
+                  {{ rec.texto }}
+                </li>
+              </ul>
+            </div>
+          </ng-container>
+        </div>
+
+        <div class="back-button" (click)="cambiarVista('inicio')">
+          ← Volver al inicio
+        </div>
+      </ng-container>
+
+      <!-- VISTA DETECTAR -->
+      <ng-container *ngIf="vistaActual === 'detectar'">
+        <div class="priority-container">
+          <div
+            class="priority alta"
+            title="Controles críticos con bajo nivel de implementación. Requieren atención inmediata."
+            [class.active]="prioridadSeleccionada === 'alta'"
+            (click)="seleccionarPrioridad('alta')"
+          >
+            Prioridad Alta
+          </div>
+          <div
+            class="priority media"
+            title="Controles parcialmente implementados. Se recomienda mejorar su cobertura."
+            [class.active]="prioridadSeleccionada === 'media'"
+            (click)="seleccionarPrioridad('media')"
+          >
+            Prioridad Media
+          </div>
+          <div
+            class="priority baja"
+            title="Controles casi completos. Solo necesitan una revisión o ajuste menor."
+            [class.active]="prioridadSeleccionada === 'baja'"
+            (click)="seleccionarPrioridad('baja')"
+          >
+            Prioridad Baja
+          </div>
+        </div>
+
+        <div class="priority-legend">
+          <div class="legend-item alta">
+            <span class="dot"></span>
+            Controles críticos con bajo nivel de implementación. Requieren
+            atención inmediata.
+          </div>
+          <div class="legend-item media">
+            <span class="dot"></span>
+            Controles parcialmente implementados. Se recomienda mejorar su
+            cobertura.
+          </div>
+          <div class="legend-item baja">
+            <span class="dot"></span>
+            Controles casi completos. Solo necesitan una revisión o ajuste
+            menor.
+          </div>
+        </div>
+
+        <div class="recommendations-toggle">
+          <ng-container *ngFor="let rec of recomendacionesFiltradas">
+            <div class="recommendation-item">
+              <div
+                class="recommendation-header"
+                (click)="alternarDesglose(rec.control + '__' + rec.funcion)"
+              >
+                <img
+                  src="/arrow.svg"
+                  class="arrow-icon"
+                  [class.abierta]="
+                    desplegarControl[rec.control + '__' + rec.funcion]
+                  "
+                  alt="Flecha"
+                />
+                <h3>
+                  <strong>{{ rec.control }}</strong>
+                  <!-- <span>: {{ rec.categoriaNIST }}</span> -->
+                </h3>
+              </div>
+
+              <ul
+                class="recommendation-list"
+                *ngIf="desplegarControl[rec.control + '__' + rec.funcion]"
+              >
+                <li>
+                  <img src="/check.svg" class="check-icon" alt="check" />
+                  {{ rec.texto }}
+                </li>
+              </ul>
+            </div>
+          </ng-container>
+        </div>
+
+        <div class="back-button" (click)="cambiarVista('inicio')">
+          ← Volver al inicio
+        </div>
+      </ng-container>
+
+      <!-- VISTA RESPONDER -->
+      <ng-container *ngIf="vistaActual === 'responder'">
+        <div class="priority-container">
+          <div
+            class="priority alta"
+            title="Controles críticos con bajo nivel de implementación. Requieren atención inmediata."
+            [class.active]="prioridadSeleccionada === 'alta'"
+            (click)="seleccionarPrioridad('alta')"
+          >
+            Prioridad Alta
+          </div>
+          <div
+            class="priority media"
+            title="Controles parcialmente implementados. Se recomienda mejorar su cobertura."
+            [class.active]="prioridadSeleccionada === 'media'"
+            (click)="seleccionarPrioridad('media')"
+          >
+            Prioridad Media
+          </div>
+          <div
+            class="priority baja"
+            title="Controles casi completos. Solo necesitan una revisión o ajuste menor."
+            [class.active]="prioridadSeleccionada === 'baja'"
+            (click)="seleccionarPrioridad('baja')"
+          >
+            Prioridad Baja
+          </div>
+        </div>
+
+        <div class="priority-legend">
+          <div class="legend-item alta">
+            <span class="dot"></span>
+            Controles críticos con bajo nivel de implementación. Requieren
+            atención inmediata.
+          </div>
+          <div class="legend-item media">
+            <span class="dot"></span>
+            Controles parcialmente implementados. Se recomienda mejorar su
+            cobertura.
+          </div>
+          <div class="legend-item baja">
+            <span class="dot"></span>
+            Controles casi completos. Solo necesitan una revisión o ajuste
+            menor.
+          </div>
+        </div>
+
+        <div class="recommendations-toggle">
+          <ng-container *ngFor="let rec of recomendacionesFiltradas">
+            <div class="recommendation-item">
+              <div
+                class="recommendation-header"
+                (click)="alternarDesglose(rec.control + '__' + rec.funcion)"
+              >
+                <img
+                  src="/arrow.svg"
+                  class="arrow-icon"
+                  [class.abierta]="
+                    desplegarControl[rec.control + '__' + rec.funcion]
+                  "
+                  alt="Flecha"
+                />
+                <h3>
+                  <strong>{{ rec.control }}</strong>
+                  <!-- <span>: {{ rec.categoriaNIST }}</span> -->
+                </h3>
+              </div>
+
+              <ul
+                class="recommendation-list"
+                *ngIf="desplegarControl[rec.control + '__' + rec.funcion]"
+              >
+                <li>
+                  <img src="/check.svg" class="check-icon" alt="check" />
+                  {{ rec.texto }}
+                </li>
+              </ul>
+            </div>
+          </ng-container>
+        </div>
+
+        <div class="back-button" (click)="cambiarVista('inicio')">
+          ← Volver al inicio
+        </div>
+      </ng-container>
+
+      <!-- VISTA RECUPERAR -->
+      <ng-container *ngIf="vistaActual === 'recuperar'">
+        <div class="priority-container">
+          <div
+            class="priority alta"
+            title="Controles críticos con bajo nivel de implementación. Requieren atención inmediata."
+            [class.active]="prioridadSeleccionada === 'alta'"
+            (click)="seleccionarPrioridad('alta')"
+          >
+            Prioridad Alta
+          </div>
+          <div
+            class="priority media"
+            title="Controles parcialmente implementados. Se recomienda mejorar su cobertura."
+            [class.active]="prioridadSeleccionada === 'media'"
+            (click)="seleccionarPrioridad('media')"
+          >
+            Prioridad Media
+          </div>
+          <div
+            class="priority baja"
+            title="Controles casi completos. Solo necesitan una revisión o ajuste menor."
+            [class.active]="prioridadSeleccionada === 'baja'"
+            (click)="seleccionarPrioridad('baja')"
+          >
+            Prioridad Baja
+          </div>
+        </div>
+
+        <div class="priority-legend">
+          <div class="legend-item alta">
+            <span class="dot"></span>
+            Controles críticos con bajo nivel de implementación. Requieren
+            atención inmediata.
+          </div>
+          <div class="legend-item media">
+            <span class="dot"></span>
+            Controles parcialmente implementados. Se recomienda mejorar su
+            cobertura.
+          </div>
+          <div class="legend-item baja">
+            <span class="dot"></span>
+            Controles casi completos. Solo necesitan una revisión o ajuste
+            menor.
+          </div>
+        </div>
+
+        <div class="recommendations-toggle">
+          <ng-container *ngFor="let rec of recomendacionesFiltradas">
+            <div class="recommendation-item">
+              <div
+                class="recommendation-header"
+                (click)="alternarDesglose(rec.control + '__' + rec.funcion)"
+              >
+                <img
+                  src="/arrow.svg"
+                  class="arrow-icon"
+                  [class.abierta]="
+                    desplegarControl[rec.control + '__' + rec.funcion]
+                  "
+                  alt="Flecha"
+                />
+                <h3>
+                  <strong>{{ rec.control }}</strong>
+                  <!-- <span>: {{ rec.categoriaNIST }}</span> -->
+                </h3>
+              </div>
+
+              <ul
+                class="recommendation-list"
+                *ngIf="desplegarControl[rec.control + '__' + rec.funcion]"
+              >
+                <li>
+                  <img src="/check.svg" class="check-icon" alt="check" />
+                  {{ rec.texto }}
+                </li>
+              </ul>
+            </div>
+          </ng-container>
+        </div>
+        <div class="back-button" (click)="cambiarVista('inicio')">
+          ← Volver al inicio
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

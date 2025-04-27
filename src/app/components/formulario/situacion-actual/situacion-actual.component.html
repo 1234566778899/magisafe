@@ -1,0 +1,108 @@
+<div class="evaluation-screen">
+  <div class="form-container">
+    <div class="tab-progress" *ngIf="getProgressPercentage()>0">
+      <div class="progress"
+        [style.width.%]="getProgressPercentage()">{{getProgressPercentage().toFixed(0)}}%</div>
+    </div>
+    <div class="header" [class.hide]="hideHeader">EVALUACIÓN DE
+      SITUACIÓN ACTUAL</div>
+    <div class="tab-bar">
+      <div *ngFor="let dimension of dimensiones; let index=index"
+        class="tab-bar-item"
+        (click)="setStep(index+1)"
+        [ngClass]="{ 'active': currentStep-1 == index }">{{dimension}}
+        <i *ngIf="anwers[index]" class="fa-solid fa-check icon-check"></i></div>
+    </div>
+    <div class="form-content" #formContent
+      (scroll)="onContentScroll(formContent)">
+      <div class="guide">
+        <p>
+          Esta encuesta tiene como fin identificar la situación actual de la
+          empresa <strong>{{formulario.nombreEmpresa }}</strong> (RUC:
+          <strong>{{
+            formulario.rucEmpresa }}</strong>) y evaluar su nivel de madurez en
+          cuanto a
+          seguridad de la información.
+        </p>
+
+        <h3>Niveles de medición</h3>
+        <ul>
+          <li><strong>1.</strong> No implementado: No existe ningún proceso o
+            acción relacionada.</li>
+          <li><strong>2.</strong> Implementado de forma mínima: Acciones
+            informales y aisladas.</li>
+          <li><strong>3.</strong> Implementado de manera parcial: Proceso formal
+            que cubre algunos aspectos, pero no en todas las áreas o roles.</li>
+          <li><strong>4.</strong> Implementado en gran medida: Control en la
+            mayoría de las áreas y roles, con detalles menores faltantes.</li>
+          <li><strong>5.</strong> Totalmente implementado: Control completo en
+            todas las áreas y roles, con revisiones periódicas.</li>
+        </ul>
+      </div>
+      <ng-container
+        *ngFor="let bloque of preguntasPorDimension.slice(currentStep-1,currentStep)">
+        <h3>{{ bloque.dimension }}</h3>
+        <div class="table-container desktop-view">
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th *ngFor="let nivel of niveles">{{ nivel }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let pregunta of bloque.preguntas">
+                <td>
+                  <span>{{ pregunta.texto }}</span>
+                  <p *ngIf="errores()[pregunta.id]" class="error-message">
+                    *Debes marcar una opción
+                  </p>
+                </td>
+                <td *ngFor="let nivel of niveles; let i = index">
+                  <input
+                    type="radio"
+                    [name]="'pregunta_' + bloque.categoria + '_' + pregunta.id"
+                    [value]="i"
+                    [(ngModel)]="respuestas()[pregunta.id]"
+                    (ngModelChange)="actualizarRespuesta(pregunta.id, i)" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="mobile-view">
+          <div *ngFor="let pregunta of bloque.preguntas" class="question-block">
+            <p class="question-text">{{ pregunta.texto }}</p>
+            <div class="options">
+              <label
+                *ngFor="let nivel of niveles; let i = index"
+                class="radio-option">
+                <input
+                  type="radio"
+                  [name]="'pregunta_' + bloque.categoria + '_' + pregunta.id"
+                  [value]="i"
+                  [checked]="respuestas()[pregunta.id] === i"
+                  (change)="actualizarRespuesta(pregunta.id, i)" />
+                <span>{{ nivel }}</span>
+              </label>
+            </div>
+            <p *ngIf="errores()[pregunta.id]" class="error-message">
+              *Debes marcar una opción
+            </p>
+          </div>
+        </div>
+      </ng-container>
+      <div class="button-container">
+        <button
+          [ngClass]="{ 'no-visible': currentStep <= 1 }">
+          ANTERIOR
+        </button>
+        <button
+          (click)="intentarAvanzar()"
+          [ngClass]="{ disabled: !todasRespondidasBloque() || (currentStep==9 && !todasRespondidas())}">
+          SIGUIENTE
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

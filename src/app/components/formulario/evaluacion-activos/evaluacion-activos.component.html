@@ -1,0 +1,100 @@
+<div class="evaluation-screen">
+  <div class="form-container">
+    <div class="header">EVALUACIÓN DE ACTIVOS</div>
+    <div class="form-content">
+      <div class="guide">
+        <p>
+          Para fortalecer la seguridad de tu empresa, primero necesitas conocer
+          qué activos son clave y qué tan protegidos están. Esta evaluación te
+          ayudará a identificar riesgos y oportunidades de mejora en la gestión
+          de la seguridad de la información.
+        </p>
+
+        <h3>Niveles de medición</h3>
+        <ul>
+          <li><strong>No: </strong> No cuenta con el activo.</li>
+          <li><strong>No implementado: </strong> Sin acciones de seguridad.</li>
+          <li>
+            <strong>Implementado de forma mínima: </strong> Acciones informales
+            y aisladas.
+          </li>
+          <li>
+            <strong>Implementado de manera parcial: </strong> Proceso formal que
+            cubre algunos aspectos.
+          </li>
+          <li>
+            <strong>Implementado en gran medida: </strong> Control en la mayoría
+            de las áreas y roles, con detalles menores faltantes.
+          </li>
+          <li>
+            <strong>Totalmente implementado: </strong> Control completo en todas
+            las áreas y roles, con revisiones periódicas.
+          </li>
+        </ul>
+      </div>
+      <ng-container *ngFor="let bloque of preguntasEvaluacionActivos">
+        <h3>{{ bloque.categoria }}</h3>
+        <div class="table-container desktop-view">
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th *ngFor="let nivel of niveles">{{ nivel }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let pregunta of bloque.preguntas">
+                <td>
+                  <span>{{ pregunta.texto }}</span>
+                  <p *ngIf="errores()[pregunta.id]" class="error-message">
+                    *Debes marcar una opción
+                  </p>
+                </td>
+                <td *ngFor="let nivel of niveles; let i = index">
+                  <input
+                    type="radio"
+                    [name]="'pregunta_' + bloque.categoria + '_' + pregunta.id"
+                    [value]="i"
+                    [checked]="respuestas()[pregunta.id] === i"
+                    (change)="actualizarRespuesta(pregunta.id, i)"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="mobile-view">
+          <div *ngFor="let pregunta of bloque.preguntas" class="question-block">
+            <p class="question-text">{{ pregunta.texto }}</p>
+            <div class="options">
+              <label
+                *ngFor="let nivel of niveles; let i = index"
+                class="radio-option"
+              >
+                <input
+                  type="radio"
+                  [name]="'pregunta_' + bloque.categoria + '_' + pregunta.id"
+                  [value]="i"
+                  [(ngModel)]="respuestas()[pregunta.id]"
+                  (ngModelChange)="actualizarRespuesta(pregunta.id, i)"
+                />
+                <span>{{ nivel }}</span>
+              </label>
+            </div>
+            <p *ngIf="errores()[pregunta.id]" class="error-message">
+              *Debes marcar una opción
+            </p>
+          </div>
+        </div>
+      </ng-container>
+      <div class="button-container">
+        <button
+          (click)="intentarAvanzar()"
+          [ngClass]="{ disabled: !todasRespondidas() }"
+        >
+          SIGUIENTE
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,22 @@
+<div *ngIf="pasoActual() === -1" class="container main-screen">
+  <div class="overlay"></div>
+  <div class="content">
+    <h1>¿Tu empresa está protegida?</h1>
+    <p>Evalúa en minutos el nivel de seguridad de tu negocio y descubre qué
+      pasos seguir para fortalecerlo.</p>
+    <div class="form-item">
+      <label>RUC</label>
+      <input type="text" [(ngModel)]="rucEmpresa">
+    </div>
+    <div class="form-item">
+      <label>Nombre de la empresa</label>
+      <input type="text" [(ngModel)]="nombreEmpresa">
+    </div>
+    <button (click)="iniciarEvaluacion()" [disabled]="!camposValidos()">INICIAR
+      EVALUACIÓN</button>
+  </div>
+</div>
+
+<div *ngIf="pasoActual() >= 0" class="container">
+  <ng-container *ngComponentOutlet="pasos[pasoActual()]"></ng-container>
+</div>
