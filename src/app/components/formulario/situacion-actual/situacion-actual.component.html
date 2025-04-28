@@ -13,8 +13,7 @@
         [ngClass]="{ 'active': currentStep-1 == index }">{{dimension}}
         <i *ngIf="anwers[index]" class="fa-solid fa-check icon-check"></i></div>
     </div>
-    <div class="form-content" #formContent
-      (scroll)="onContentScroll(formContent)">
+    <div class="form-content" #formContent>
       <div class="guide">
         <p>
           Esta encuesta tiene como fin identificar la situación actual de la

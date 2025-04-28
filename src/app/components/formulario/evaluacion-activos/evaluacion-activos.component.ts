@@ -41,6 +41,7 @@ export class EvaluacionActivosComponent implements OnInit {
   actualizarRespuesta(preguntaId: number, nivel: number) {
     this.respuestas.update(r => ({ ...r, [preguntaId]: nivel }));
     this.errores.update(e => ({ ...e, [preguntaId]: false }));
+    localStorage.setItem('respuestasEvaluacionActivos', JSON.stringify(this.respuestas()));
   }
 
   todasRespondidas(): boolean {
@@ -98,12 +99,10 @@ export class EvaluacionActivosComponent implements OnInit {
 
   private marcarErrores() {
     const nuevosErrores: Record<number, boolean> = {};
-    this.preguntasEvaluacionActivos.forEach(categoria => {
-      categoria.preguntas.forEach(p => {
-        if (this.respuestas()[p.id] === undefined) {
-          nuevosErrores[p.id] = true;
-        }
-      });
+    preguntasEvaluacionActivos[this.currentStep - 1].preguntas.forEach(p => {
+      if (this.respuestas()[p.id] === undefined) {
+        nuevosErrores[p.id] = true;
+      }
     });
     this.errores.set(nuevosErrores);
   }

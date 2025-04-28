@@ -22,7 +22,6 @@ export class SituacionActualComponent implements OnInit {
   total = this.getTotal();
   anwers: any = {};
   hideHeader = false;
-  private lastScrollTop = 0;
   ngOnInit(): void {
 
   }
@@ -35,15 +34,7 @@ export class SituacionActualComponent implements OnInit {
     }
     return total;
   }
-  onContentScroll(formContent: HTMLElement) {
-    const currentScroll = formContent.scrollTop;
-    if (currentScroll > this.lastScrollTop && currentScroll > 300) {
-      this.hideHeader = true;
-    } else if (currentScroll < this.lastScrollTop) {
-      this.hideHeader = false;
-    }
-    this.lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
-  }
+
   private scrollToTop() {
     if (this.formContent) {
       this.formContent.nativeElement.scrollTo({ top: 0, behavior: 'smooth' });
@@ -52,6 +43,7 @@ export class SituacionActualComponent implements OnInit {
   actualizarRespuesta(preguntaId: number, nivel: number) {
     this.respuestas.update(r => ({ ...r, [preguntaId]: nivel }));
     this.errores.update(e => ({ ...e, [preguntaId]: false }));
+    localStorage.setItem('respuestasSituacionActual', JSON.stringify(this.respuestas()));
   }
   getProgressPercentage(): number {
     const procentage = (Object.keys(this.respuestas()).length / this.total) * 100;
@@ -108,12 +100,10 @@ export class SituacionActualComponent implements OnInit {
 
   private marcarErrores() {
     const nuevosErrores: Record<number, boolean> = {};
-    this.preguntasPorDimension.forEach(dimension => {
-      dimension.preguntas.forEach(p => {
-        if (this.respuestas()[p.id] === undefined) {
-          nuevosErrores[p.id] = true;
-        }
-      });
+    preguntasPorDimension[this.currentStep - 1].preguntas.forEach(p => {
+      if (this.respuestas()[p.id] === undefined) {
+        nuevosErrores[p.id] = true;
+      }
     });
     this.errores.set(nuevosErrores);
   }

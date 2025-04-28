@@ -46,6 +46,7 @@ export class ResultadosComponent implements AfterViewInit {
     return this.datePipe.transform(today, 'dd/MM/yyyy')!;
   }
   respuestasSituacionActual = this.formulario.respuestasSituacionActual();
+
   nivelesSA = this.formulario.nivelesSituacionActual;
 
   ngAfterViewInit(): void {
@@ -56,7 +57,7 @@ export class ResultadosComponent implements AfterViewInit {
       '#D72638',
       this.nivelesSA
     );
-    this.renderDoughnut(
+    this.renderDoughnut2(
       'chartGeneral2',
       this.promedioFinalSituacionActual,
       '#1C2541',
@@ -70,7 +71,7 @@ export class ResultadosComponent implements AfterViewInit {
       '#F78C37',
       this.nivelesSA
     );
-    this.renderDoughnut(
+    this.renderDoughnut2(
       'chartISO2',
       this.promedioPorCategoriaSituacionActual['iso27001'],
       '#1C2541',
@@ -84,7 +85,7 @@ export class ResultadosComponent implements AfterViewInit {
       '#0074D9',
       this.nivelesSA
     );
-    this.renderDoughnut(
+    this.renderDoughnut2(
       'chartNIST2',
       this.promedioPorCategoriaSituacionActual['nist'],
       '#1C2541',
@@ -167,7 +168,8 @@ export class ResultadosComponent implements AfterViewInit {
   ) {
     const maxValor = niveles.length;
     const ctx = document.getElementById(canvasId) as HTMLCanvasElement;
-
+    console.log('Valor:', valor);
+    console.log('Max Valor:', maxValor);
     const centerTextPlugin = {
       id: 'centerText',
       beforeDraw(chart: any) {
@@ -177,6 +179,55 @@ export class ResultadosComponent implements AfterViewInit {
         ctx.font = `${fontSize}px sans-serif`;
         ctx.textBaseline = 'middle';
         ctx.fillStyle = '#fff';
+        const text = `${valor.toFixed(2)}/${maxValor}`;
+        const textX = Math.round((width - ctx.measureText(text).width) / 2);
+        const textY = height / 2;
+        ctx.fillText(text, textX, textY);
+        ctx.restore();
+      },
+    };
+
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Completado', 'Faltante'],
+        datasets: [
+          {
+            data: [valor, maxValor - valor],
+            backgroundColor: [fillColor, baseColor],
+            borderWidth: 0,
+          },
+        ],
+      },
+      options: {
+        cutout: '70%',
+        plugins: {
+          tooltip: { enabled: false },
+          legend: { display: false },
+        },
+      },
+      plugins: [centerTextPlugin],
+    });
+  }
+  renderDoughnut2(
+    canvasId: string,
+    valor: number,
+    baseColor: string,
+    fillColor: string,
+    niveles: string[]
+  ) {
+    const maxValor = niveles.length;
+    const ctx = document.getElementById(canvasId) as HTMLCanvasElement;
+
+    const centerTextPlugin = {
+      id: 'centerText',
+      beforeDraw(chart: any) {
+        const { width, height, ctx } = chart;
+        ctx.save();
+        const fontSize = (height / 5).toFixed(2);
+        ctx.font = `${fontSize}px sans-serif`;
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#000';
         const text = `${valor.toFixed(2)}/${maxValor}`;
         const textX = Math.round((width - ctx.measureText(text).width) / 2);
         const textY = height / 2;
