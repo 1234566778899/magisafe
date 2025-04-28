@@ -1,7 +1,18 @@
 <div class="evaluation-screen">
   <div class="form-container">
+    <div class="tab-progress" *ngIf="getProgressPercentage()>0">
+      <div class="progress"
+        [style.width.%]="getProgressPercentage()">{{getProgressPercentage().toFixed(0)}}%</div>
+    </div>
     <div class="header">EVALUACIÓN DE ACTIVOS</div>
-    <div class="form-content">
+    <div class="tab-bar">
+      <div *ngFor="let categoria of preguntas; let index=index"
+        class="tab-bar-item"
+        (click)="setStep(index+1)"
+        [ngClass]="{ 'active': currentStep-1 == index }">{{categoria}}
+        <i *ngIf="anwers[index]" class="fa-solid fa-check icon-check"></i></div>
+    </div>
+    <div class="form-content" #formContent>
       <div class="guide">
         <p>
           Para fortalecer la seguridad de tu empresa, primero necesitas conocer
@@ -32,7 +43,8 @@
           </li>
         </ul>
       </div>
-      <ng-container *ngFor="let bloque of preguntasEvaluacionActivos">
+      <ng-container
+        *ngFor="let bloque of preguntasEvaluacionActivos.slice(currentStep-1,currentStep)">
         <h3>{{ bloque.categoria }}</h3>
         <div class="table-container desktop-view">
           <table>
@@ -56,8 +68,7 @@
                     [name]="'pregunta_' + bloque.categoria + '_' + pregunta.id"
                     [value]="i"
                     [checked]="respuestas()[pregunta.id] === i"
-                    (change)="actualizarRespuesta(pregunta.id, i)"
-                  />
+                    (change)="actualizarRespuesta(pregunta.id, i)" />
                 </td>
               </tr>
             </tbody>
@@ -69,15 +80,13 @@
             <div class="options">
               <label
                 *ngFor="let nivel of niveles; let i = index"
-                class="radio-option"
-              >
+                class="radio-option">
                 <input
                   type="radio"
                   [name]="'pregunta_' + bloque.categoria + '_' + pregunta.id"
                   [value]="i"
                   [(ngModel)]="respuestas()[pregunta.id]"
-                  (ngModelChange)="actualizarRespuesta(pregunta.id, i)"
-                />
+                  (ngModelChange)="actualizarRespuesta(pregunta.id, i)" />
                 <span>{{ nivel }}</span>
               </label>
             </div>
@@ -89,9 +98,12 @@
       </ng-container>
       <div class="button-container">
         <button
+          [ngClass]="{ 'no-visible': currentStep <= 1 }">
+          ANTERIOR
+        </button>
+        <button
           (click)="intentarAvanzar()"
-          [ngClass]="{ disabled: !todasRespondidas() }"
-        >
+          [ngClass]="{ disabled: !todasRespondidasBloque() || (currentStep==preguntas.length && !todasRespondidas())}">
           SIGUIENTE
         </button>
       </div>

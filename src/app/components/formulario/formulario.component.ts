@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SituacionActualComponent } from './situacion-actual/situacion-actual.component';
 import { EvaluacionActivosComponent } from './evaluacion-activos/evaluacion-activos.component';
@@ -18,6 +18,8 @@ export class FormularioComponent {
   pasoActual = signal(-1);
   rucEmpresa = '';
   nombreEmpresa = '';
+  nombre = '';
+  rol = '';
   nivelesSituacionActual = [
     'No implementado',
     'Implementado de forma mínima',
@@ -26,7 +28,7 @@ export class FormularioComponent {
     'Totalmente implementado'
   ];
   camposValidos(): boolean {
-    return this.rucEmpresa.trim().length > 0 && this.nombreEmpresa.trim().length > 0;
+    return this.rucEmpresa.trim().length > 0 && this.nombreEmpresa.trim().length > 0 && this.nombre.trim().length > 0 && this.rol.trim().length > 0;
   }
   nivelesEvaluacionActivos = [
     'No implementado',
@@ -38,8 +40,17 @@ export class FormularioComponent {
 
   respuestasSituacionActual = signal<Record<number, number>>({});
   respuestasEvaluacionActivos = signal<Record<number, number>>({});
-
+  ngOnInit() {
+    this.rucEmpresa = localStorage.getItem('rucEmpresa') || '';
+    this.nombreEmpresa = localStorage.getItem('nombreEmpresa') || '';
+    this.nombre = localStorage.getItem('nombre') || '';
+    this.rol = localStorage.getItem('rol') || '';
+  }
   iniciarEvaluacion() {
+    localStorage.setItem('rucEmpresa', this.rucEmpresa);
+    localStorage.setItem('nombreEmpresa', this.nombreEmpresa);
+    localStorage.setItem('nombre', this.nombre);
+    localStorage.setItem('rol', this.rol);
     this.pasoActual.set(0);
   }
 

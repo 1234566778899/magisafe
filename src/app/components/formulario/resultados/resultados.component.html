@@ -4,13 +4,15 @@
     <div class="form-content">
       <div class="guide">
         <p>
-          Hemos evaluado el nivel de madurez en seguridad de la información de
-          la empresa
-          <strong>{{ formulario.nombreEmpresa }}</strong> (RUC: <strong>{{
-            formulario.rucEmpresa }}</strong>).
-          A continuación, puedes ver tu puntuación general y el desglose según
-          los estándares ISO 27001 y NIST.
+          Hoy {{getFechaHoy()}}, se ha evaluado el nivel de madurez
+          en seguridad de
+          la información de la empresa <strong>{{ formulario.nombreEmpresa
+            }}</strong> (RUC: <strong>{{
+            formulario.rucEmpresa }}</strong>), evaluación realizada por
+          {{formulario.nombre}} con el cargo de {{formulario.rol}}.
         </p>
+        <p>A continuación, puedes ver tu puntuación general y el desglose según
+          los estándares ISO 27001 y NIST.</p>
       </div>
 
       <div class="graphics">
@@ -47,59 +49,64 @@
         </div>
       </div>
 
-      <!-- <div class="resultados-categoria">
-        <h3>Situación Actual</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Dimensión - Pregunta</th>
-              <th>Respuesta</th>
-              <th>Puntaje</th>
-            </tr>
-          </thead>
-          <tbody>
-            <ng-container *ngFor="let dimension of detalleSituacionActual">
-              <tr *ngFor="let fila of dimension.detalle">
-                <td>{{ fila.dimension }} - {{ fila.texto }}</td>
-                <td>{{ fila.respuesta }}</td>
-                <td>{{ fila.puntaje }}</td>
-              </tr>
-              <tr class="promedio-fila">
-                <td colspan="2"><strong>Promedio</strong></td>
-                <td>
-                  <strong>{{ dimension.promedio }}</strong>
-                </td>
-              </tr>
-            </ng-container>
-
-            <tr
-              class="promedio-total"
-              *ngFor="let key of categoriasSituacionActual"
-            >
-              <td colspan="2">
-                <strong>Promedio Total {{ key.toUpperCase() }}</strong>
-              </td>
-              <td>
-                <strong>{{ promedioPorCategoriaSituacionActual[key] }}</strong>
-              </td>
-            </tr>
-
-            <tr class="promedio-total">
-              <td colspan="2"><strong>Promedio Final</strong></td>
-              <td>
-                <strong>{{ promedioFinalSituacionActual }}</strong>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div> -->
-
       <div class="button-container">
         <button (click)="descargarResultados()">DESCARGAR RESULTADOS</button>
 
         <button (click)="irAFormularioEvaluacionActivos()">
           ¿CÓMO MEJORAR?
         </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div class="pdf-export oculto">
+  <div class="header">RESULTADOS DE EVALUACIÓN</div>
+  <div class="form-content-pdf">
+    <div class="guide-pdf">
+      <p>
+        Hoy {{getFechaHoy()}}, se ha evaluado el nivel de madurez en
+        seguridad de
+        la información de la empresa <strong>{{ formulario.nombreEmpresa
+          }}</strong> (RUC: <strong>{{
+          formulario.rucEmpresa }}</strong>), evaluación realizada por
+        {{formulario.nombre}} con el cargo de {{formulario.rol}}.
+      </p>
+      <p>A continuación, puedes ver tu puntuación general y el desglose según
+        los estándares ISO 27001 y NIST.</p>
+    </div>
+
+    <div class="graphics">
+      <div class="donut-wrapper">
+        <p class="donut-title-pdf">Nivel de Madurez - General</p>
+        <div class="donut">
+          <canvas id="chartGeneral2"></canvas>
+        </div>
+      </div>
+
+      <div class="donut-wrapper">
+        <p class="donut-title-pdf">Nivel de Madurez - ISO 27001</p>
+        <div class="donut">
+          <canvas id="chartISO2"></canvas>
+        </div>
+      </div>
+
+      <div class="donut-wrapper">
+        <p class="donut-title-pdf">Nivel de Madurez - NIST</p>
+        <div class="donut">
+          <canvas id="chartNIST2"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="bar-container-pdf">
+      <div class="bar-section">
+        <h3>DIMENSIONES SEGÚN ISO 27001:2022</h3>
+        <canvas id="chartBarISO2"></canvas>
+      </div>
+      <div class="bar-section">
+        <h3>DIMENSIONES SEGÚN NIST</h3>
+        <canvas id="chartBarNIST2"></canvas>
       </div>
     </div>
   </div>

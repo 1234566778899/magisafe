@@ -5,16 +5,17 @@ import { preguntasEvaluacionActivos } from '../utils/preguntas-evaluacion-activo
 import { recomendacionesEvaluacionActivos } from '../utils/recomendaciones';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-
+import { DatePipe } from '@angular/common';
 @Component({
   selector: 'app-recomendaciones',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './recomendaciones.component.html',
   styleUrl: './recomendaciones.component.scss',
+  providers: [DatePipe]
 })
 export class RecomendacionesComponent {
-  private formulario = inject(FormularioComponent);
+  public formulario = inject(FormularioComponent);
   respuestasEvaluacionActivos = this.formulario.respuestasEvaluacionActivos();
   niveles = this.formulario.nivelesEvaluacionActivos;
 
@@ -28,8 +29,12 @@ export class RecomendacionesComponent {
 
   prioridadSeleccionada: 'alta' | 'media' | 'baja' = 'alta';
 
-  constructor() {
+  constructor(private datePipe: DatePipe) {
     this.calcularEstrategiasPorFuncion();
+  }
+  getFechaHoy(): string {
+    const today = new Date();
+    return this.datePipe.transform(today, 'dd/MM/yyyy')!;
   }
 
   cambiarVista(vista: typeof this.vistaActual) {
@@ -45,7 +50,7 @@ export class RecomendacionesComponent {
   seleccionarPrioridad(prioridad: 'alta' | 'media' | 'baja') {
     this.prioridadSeleccionada = prioridad;
   }
-  
+
 
   detalleEvaluacionActivos = this.calcularDetalle(
     this.respuestasEvaluacionActivos,
@@ -121,19 +126,19 @@ export class RecomendacionesComponent {
       this.controlesConPuntajes.map((control) => {
         const promedio = control.puntajes.reduce((acc, val) => acc + val, 0) / control.puntajes.length;
         const nivelRedondeado = Math.round(promedio);
-  
+
         const match = recomendacionesEvaluacionActivos.find(
           (r) =>
             r.control.trim().toLowerCase() === control.texto.trim().toLowerCase() &&
             r.funcion.trim().toLowerCase() === control.funcion.trim().toLowerCase()
         );
-  
+
         const textoRecomendacion = match?.recomendacion.find(
           (rec) => rec.nivelMadurez === nivelRedondeado
         )?.texto;
-  
+
         const clave = `${control.texto.trim().toLowerCase()}__${control.funcion.trim().toLowerCase()}`;
-  
+
         return [
           clave,
           {
@@ -147,7 +152,7 @@ export class RecomendacionesComponent {
       })
     ).values()
   );
-  
+
   get recomendacionesFiltradas() {
     return this.recomendaciones.filter(
       (r) =>
@@ -182,15 +187,15 @@ export class RecomendacionesComponent {
         prioridad: string;
       }[]
     >();
-  
+
     for (const r of this.recomendaciones) {
       if (r.nivel >= 5 || !r.texto.trim()) continue;
-  
+
       let prioridad: 'alta' | 'media' | 'baja';
       if (r.nivel < 2.5) prioridad = 'alta';
       else if (r.nivel < 4) prioridad = 'media';
       else prioridad = 'baja';
-  
+
       const lista = agrupado.get(r.funcion) ?? [];
       lista.push({
         control: r.control,
@@ -199,7 +204,7 @@ export class RecomendacionesComponent {
       });
       agrupado.set(r.funcion, lista);
     }
-  
+
     this.estrategiasPorFuncion = Array.from(agrupado.entries()).map(
       ([funcion, recomendaciones]) => ({
         funcion,
@@ -207,48 +212,43 @@ export class RecomendacionesComponent {
       })
     );
   }
-  
+
   async descargarResultados() {
     const element = document.querySelector('.pdf-export') as HTMLElement;
     if (!element) return;
-  
-    const originalStyle = element.style.cssText;
     const estabaOculto = element.classList.contains('oculto');
-  
+
     // Mostrar temporalmente
     element.classList.remove('oculto');
     element.classList.add('modo-escritorio');
     window.scrollTo(0, 0);
-  
+
     await new Promise((resolve) => setTimeout(resolve, 500));
-  
+
     html2canvas(element, {
       scale: 2,
       useCORS: true,
       backgroundColor: '#ffffff',
       scrollY: -window.scrollY,
+      x: 10, // Ajusta la posición en X para dejar un margen
+      y: 10, // Ajusta la posición en Y para dejar un margen
     }).then((canvas) => {
-      // Restaurar visibilidad
-      if (estabaOculto) element.classList.add('oculto');
-      element.classList.remove('modo-escritorio');
-      element.style.cssText = originalStyle;
-  
       const imgData = canvas.toDataURL('image/jpeg', 1.0);
       const pdf = new jsPDF('p', 'mm', 'a4');
-      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfWidth = pdf.internal.pageSize.getWidth() - 20;  // Establecer márgenes
       const imgHeight = (canvas.height * pdfWidth) / canvas.width;
-  
+
       if (imgHeight > pdf.internal.pageSize.getHeight()) {
         let position = 0;
         while (position < imgHeight) {
-          pdf.addImage(imgData, 'JPEG', 0, -position, pdfWidth, imgHeight);
-          position += pdf.internal.pageSize.getHeight();
+          pdf.addImage(imgData, 'JPEG', 10, -position, pdfWidth, imgHeight);  // Establecer márgenes en X
+          position += pdf.internal.pageSize.getHeight() + 20;
           if (position < imgHeight) pdf.addPage();
         }
       } else {
-        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, imgHeight);
+        pdf.addImage(imgData, 'JPEG', 10, 20, pdfWidth, imgHeight);  // Establecer márgenes en X e Y
       }
-  
+      if (estabaOculto) element.classList.add('oculto');
       pdf.save('estrategias-por-funcion.pdf');
     });
   }

@@ -5,6 +5,10 @@ canvas {
   max-height: 100%;
 }
 
+.texto-pdf {
+  color: black;
+}
+
 .recommendations-screen {
   position: relative;
   background: #030f25;
@@ -483,7 +487,9 @@ canvas {
 }
 
 .pdf-export {
-  background-color: #fff;
+  margin-top: 20mm;
+  margin-bottom: 20mm;
+  padding: 10px;
 }
 
 .pdf-title {
@@ -591,7 +597,8 @@ canvas {
 
 .pdf-export.modo-escritorio {
   width: 1000px;
-  margin: 0 auto;
+  margin-top: 20mm;
+  margin-bottom: 20mm;
   font-size: 1rem;
   padding: 40px;
 }
@@ -599,4 +606,3 @@ canvas {
 .pdf-export.oculto {
   display: none;
 }
-

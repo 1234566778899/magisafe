@@ -19,17 +19,25 @@ export class SituacionActualComponent implements OnInit {
   respuestas = this.formulario.respuestasSituacionActual;
   errores = signal<Record<number, boolean>>({});
   currentStep = 1;
+  total = this.getTotal();
   anwers: any = {};
   hideHeader = false;
   private lastScrollTop = 0;
   ngOnInit(): void {
 
   }
-  @ViewChild('formContent') formContent!: ElementRef<HTMLDivElement>;
 
+  @ViewChild('formContent') formContent!: ElementRef<HTMLDivElement>;
+  getTotal(): number {
+    let total = 0;
+    for (let item of preguntasPorDimension) {
+      total += item.preguntas.length;
+    }
+    return total;
+  }
   onContentScroll(formContent: HTMLElement) {
     const currentScroll = formContent.scrollTop;
-    if (currentScroll > this.lastScrollTop && currentScroll > 100) {
+    if (currentScroll > this.lastScrollTop && currentScroll > 300) {
       this.hideHeader = true;
     } else if (currentScroll < this.lastScrollTop) {
       this.hideHeader = false;
@@ -46,7 +54,7 @@ export class SituacionActualComponent implements OnInit {
     this.errores.update(e => ({ ...e, [preguntaId]: false }));
   }
   getProgressPercentage(): number {
-    const procentage = (Object.keys(this.respuestas()).length / 59) * 100;
+    const procentage = (Object.keys(this.respuestas()).length / this.total) * 100;
     return procentage;
   }
   todasRespondidas(): boolean {
@@ -68,7 +76,7 @@ export class SituacionActualComponent implements OnInit {
     this.currentStep = step;
   }
   intentarAvanzar() {
-    if (this.currentStep < 9) {
+    if (this.currentStep < preguntasPorDimension.length) {
       if (this.todasRespondidasBloque()) {
         this.anwers[this.currentStep - 1] = true;
         this.scrollToTop();

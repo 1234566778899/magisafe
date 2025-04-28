@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { FormularioComponent } from '../formulario.component';
 import { preguntasPorDimension as preguntasSituacionActual } from '../utils/preguntas-situacion-actual';
 import {
@@ -35,22 +36,28 @@ Chart.register(
   imports: [CommonModule],
   templateUrl: './resultados.component.html',
   styleUrl: './resultados.component.scss',
+  providers: [DatePipe]
 })
 export class ResultadosComponent implements AfterViewInit {
   public formulario = inject(FormularioComponent);
-
+  constructor(private datePipe: DatePipe) { }
+  getFechaHoy(): string {
+    const today = new Date();
+    return this.datePipe.transform(today, 'dd/MM/yyyy')!;
+  }
   respuestasSituacionActual = this.formulario.respuestasSituacionActual();
   nivelesSA = this.formulario.nivelesSituacionActual;
 
   ngAfterViewInit(): void {
-    console.log('Promedio General:', this.promedioFinalSituacionActual);
-    console.log(
-      'Promedios por Categoría:',
-      this.promedioPorCategoriaSituacionActual
-    );
-
     this.renderDoughnut(
       'chartGeneral',
+      this.promedioFinalSituacionActual,
+      '#1C2541',
+      '#D72638',
+      this.nivelesSA
+    );
+    this.renderDoughnut(
+      'chartGeneral2',
       this.promedioFinalSituacionActual,
       '#1C2541',
       '#D72638',
@@ -64,7 +71,21 @@ export class ResultadosComponent implements AfterViewInit {
       this.nivelesSA
     );
     this.renderDoughnut(
+      'chartISO2',
+      this.promedioPorCategoriaSituacionActual['iso27001'],
+      '#1C2541',
+      '#F78C37',
+      this.nivelesSA
+    );
+    this.renderDoughnut(
       'chartNIST',
+      this.promedioPorCategoriaSituacionActual['nist'],
+      '#1C2541',
+      '#0074D9',
+      this.nivelesSA
+    );
+    this.renderDoughnut(
+      'chartNIST2',
       this.promedioPorCategoriaSituacionActual['nist'],
       '#1C2541',
       '#0074D9',
@@ -78,10 +99,22 @@ export class ResultadosComponent implements AfterViewInit {
       isoData.map((d) => d.value),
       '#F78C37'
     );
+    this.renderBarChart2(
+      'chartBarISO2',
+      isoData.map((d) => d.label),
+      isoData.map((d) => d.value),
+      '#F78C37'
+    );
 
     const nistData = this.filtrarPromediosPorCategoria('nist');
     this.renderBarChart(
       'chartBarNIST',
+      nistData.map((d) => d.label),
+      nistData.map((d) => d.value),
+      '#0074D9'
+    );
+    this.renderBarChart2(
+      'chartBarNIST2',
       nistData.map((d) => d.label),
       nistData.map((d) => d.value),
       '#0074D9'
@@ -246,6 +279,77 @@ export class ResultadosComponent implements AfterViewInit {
       plugins: [valorSobreBarraPlugin],
     });
   }
+  renderBarChart2(
+    canvasId: string,
+    labels: string[],
+    data: number[],
+    color: string
+  ) {
+    const ctx = document.getElementById(canvasId) as HTMLCanvasElement;
+
+    const valorSobreBarraPlugin = {
+      id: 'valorSobreBarraPlugin',
+      afterDatasetsDraw(chart: any) {
+        const { ctx } = chart;
+        chart.data.datasets.forEach((dataset: any, i: number) => {
+          const meta = chart.getDatasetMeta(i);
+          meta.data.forEach((bar: any, index: number) => {
+            const valor = dataset.data[index];
+            ctx.save();
+            ctx.fillStyle = '#000';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(valor.toFixed(2), bar.x, bar.y - 8);
+            ctx.restore();
+          });
+        });
+      },
+    };
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Promedio',
+            data,
+            backgroundColor: color,
+            borderRadius: 4,
+            borderSkipped: false,
+            barPercentage: 0.6,
+            categoryPercentage: 0.9,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (context: any) => ` ${context.parsed.y.toFixed(2)}`,
+            },
+          },
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 5,
+            ticks: {
+              display: false,
+            },
+            grid: { display: false },
+          },
+          x: {
+            ticks: { color: '#000' },
+            grid: { display: false },
+          },
+        },
+      },
+      plugins: [valorSobreBarraPlugin],
+    });
+  }
 
   filtrarPromediosPorCategoria(categoria: string) {
     return this.detalleSituacionActual
@@ -306,9 +410,10 @@ export class ResultadosComponent implements AfterViewInit {
   }
 
   async descargarResultados() {
-    const element = document.querySelector('.form-container') as HTMLElement;
+    const element = document.querySelector('.pdf-export') as HTMLElement;
+    const estabaOculto = element.classList.contains('oculto');
     const originalStyle = element.style.cssText;
-
+    element.classList.remove('oculto');
     element.classList.add('modo-escritorio');
 
     await new Promise((resolve) => setTimeout(resolve, 500));
@@ -323,6 +428,7 @@ export class ResultadosComponent implements AfterViewInit {
       element.classList.remove('modo-escritorio');
       element.style.cssText = originalStyle;
 
+      if (estabaOculto) element.classList.add('oculto');
       const imgData = canvas.toDataURL('image/jpeg', 0.7);
       const pdf = new jsPDF('p', 'mm', 'a2');
       const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -332,7 +438,6 @@ export class ResultadosComponent implements AfterViewInit {
       pdf.save('resultados-evaluacion.pdf');
     });
   }
-
   irAFormularioEvaluacionActivos() {
     this.formulario.siguientePaso();
   }
