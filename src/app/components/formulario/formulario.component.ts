@@ -15,7 +15,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class FormularioComponent {
   pasos = [SituacionActualComponent, ResultadosComponent, EvaluacionActivosComponent, RecomendacionesComponent];
-  pasoActual = signal(3);
+  pasoActual = signal(-1);
   rucEmpresa = '';
   nombreEmpresa = '';
   nombre = '';
