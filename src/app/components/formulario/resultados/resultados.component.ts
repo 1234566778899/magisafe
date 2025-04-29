@@ -120,12 +120,6 @@ export class ResultadosComponent implements AfterViewInit {
       nistData.map((d) => d.value),
       '#0074D9'
     );
-
-    setTimeout(() => {
-      console.log('Canvas general:', document.getElementById('chartGeneral'));
-      console.log('Canvas ISO:', document.getElementById('chartISO'));
-      console.log('Canvas NIST:', document.getElementById('chartNIST'));
-    }, 200);
   }
 
   calcularDetalle(
@@ -168,8 +162,6 @@ export class ResultadosComponent implements AfterViewInit {
   ) {
     const maxValor = niveles.length;
     const ctx = document.getElementById(canvasId) as HTMLCanvasElement;
-    console.log('Valor:', valor);
-    console.log('Max Valor:', maxValor);
     const centerTextPlugin = {
       id: 'centerText',
       beforeDraw(chart: any) {

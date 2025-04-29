@@ -213,43 +213,81 @@ export class RecomendacionesComponent {
     );
   }
 
-  async descargarResultados() {
+  async descargarResultados2() {
     const element = document.querySelector('.pdf-export') as HTMLElement;
     if (!element) return;
     const estabaOculto = element.classList.contains('oculto');
-
-    // Mostrar temporalmente
     element.classList.remove('oculto');
     element.classList.add('modo-escritorio');
     window.scrollTo(0, 0);
-
     await new Promise((resolve) => setTimeout(resolve, 500));
-
     html2canvas(element, {
       scale: 2,
       useCORS: true,
       backgroundColor: '#ffffff',
       scrollY: -window.scrollY,
-      x: 10, // Ajusta la posición en X para dejar un margen
-      y: 10, // Ajusta la posición en Y para dejar un margen
+      x: 10,
+      y: 10,
     }).then((canvas) => {
       const imgData = canvas.toDataURL('image/jpeg', 1.0);
       const pdf = new jsPDF('p', 'mm', 'a4');
-      const pdfWidth = pdf.internal.pageSize.getWidth() - 20;  // Establecer márgenes
+      const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
       const imgHeight = (canvas.height * pdfWidth) / canvas.width;
 
       if (imgHeight > pdf.internal.pageSize.getHeight()) {
         let position = 0;
         while (position < imgHeight) {
-          pdf.addImage(imgData, 'JPEG', 10, -position, pdfWidth, imgHeight);  // Establecer márgenes en X
-          position += pdf.internal.pageSize.getHeight() + 20;
+          console.log(position);
+          pdf.addImage(imgData, 'JPEG', 10, -position, pdfWidth, imgHeight - 500);
+          position += pdf.internal.pageSize.getHeight() + 50; //here
           if (position < imgHeight) pdf.addPage();
         }
       } else {
-        pdf.addImage(imgData, 'JPEG', 10, 20, pdfWidth, imgHeight);  // Establecer márgenes en X e Y
+        pdf.addImage(imgData, 'JPEG', 10, 20, pdfWidth, imgHeight);
       }
       if (estabaOculto) element.classList.add('oculto');
       pdf.save('estrategias-por-funcion.pdf');
+    });
+  }
+
+  async descargarResultados() {
+    let elementToPrint = document.querySelector('.pdf-export') as HTMLElement;
+    if (!elementToPrint) return;
+    const estabaOculto = elementToPrint.classList.contains('oculto');
+    elementToPrint.classList.remove('oculto');
+    elementToPrint.classList.add('modo-escritorio');
+    window.scrollTo(0, 0);
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    html2canvas(elementToPrint, { scale: 3 }).then((canvas) => {
+      let pdf: jsPDF = new jsPDF('p', 'mm', 'a4');
+      let imgWidth = 211 - 20;
+      let pageHeight = 255;
+      let imgHeight = canvas.height * imgWidth / canvas.width;
+      let position = 10;
+      let pageCanvasHeight = canvas.height * (imgWidth / canvas.width);
+      let totalPages = Math.ceil(pageCanvasHeight / pageHeight);
+      let ctx = canvas.getContext('2d');
+      ctx!.imageSmoothingEnabled = false;
+      for (let i = 0; i < totalPages; i++) {
+        let onePageCanvas = document.createElement('canvas');
+        onePageCanvas.width = canvas.width;
+        onePageCanvas.height = pageHeight * (canvas.width / imgWidth);
+        let onePageCtx = onePageCanvas.getContext('2d');
+        let startY = i * onePageCanvas.height;
+        onePageCtx!.drawImage(canvas, 0, startY, canvas.width, onePageCanvas.height, 0, 0, canvas.width, onePageCanvas.height);
+        onePageCtx!.imageSmoothingEnabled = false;
+        let pageNumber = i + 1;
+        pdf.setPage(pageNumber);
+        pdf.text(`Página ${pageNumber}/${totalPages}`, imgWidth - 20, pageHeight - 10, { align: 'right' });
+        let imageData = onePageCanvas.toDataURL('image/png', 1.0);
+        pdf.addImage(imageData, 'PNG', 10, position, imgWidth, onePageCanvas.height * (imgWidth / canvas.width), undefined, 'FAST');
+        if (i < totalPages - 1) {
+          pdf.addPage();
+        }
+      }
+      pdf.save('soyunpdf.pdf');
+      location.reload();
+      return false;
     });
   }
 }

@@ -487,9 +487,9 @@ canvas {
 }
 
 .pdf-export {
-  margin-top: 20mm;
-  margin-bottom: 20mm;
-  padding: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: white;
 }
 
 .pdf-title {

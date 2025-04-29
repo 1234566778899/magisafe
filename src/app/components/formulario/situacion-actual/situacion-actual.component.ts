@@ -73,7 +73,6 @@ export class SituacionActualComponent implements OnInit {
         this.anwers[this.currentStep - 1] = true;
         this.scrollToTop();
         this.currentStep++;
-        console.log(this.currentStep);
       } else {
         this.marcarErrores();
       }

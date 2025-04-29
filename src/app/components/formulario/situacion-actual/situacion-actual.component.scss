@@ -56,8 +56,9 @@
 @media screen and (max-width: 768px) {
   .tab-bar {
     width: 100%;
-    padding: 40px 40px;
+    padding: 40px 0px;
     overflow-x: auto;
+    justify-content: flex-start;
   }
 
   .tab-bar-item {
