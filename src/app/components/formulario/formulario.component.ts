@@ -27,8 +27,13 @@ export class FormularioComponent {
     'Implementado en gran medida',
     'Totalmente implementado'
   ];
+  rucTouched = false;
+
   camposValidos(): boolean {
-    return this.rucEmpresa.trim().length > 0 && this.nombreEmpresa.trim().length > 0 && this.nombre.trim().length > 0 && this.rol.trim().length > 0;
+    return this.isValidRUC(this.rucEmpresa)
+      && this.nombreEmpresa.trim().length > 0
+      && this.nombre.trim().length > 0
+      && this.rol.trim().length > 0;
   }
   nivelesEvaluacionActivos = [
     'No implementado',
@@ -37,6 +42,20 @@ export class FormularioComponent {
     'Implementado en gran medida',
     'Totalmente implementado'
   ];
+
+  isValidRUC(ruc: string): boolean {
+    // 1) once dígitos exactos
+    if (!/^\d{11}$/.test(ruc)) return false;
+
+    const pesos = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
+    const digitos = ruc.split('').map(Number);
+
+    const suma = pesos.reduce((acc, peso, i) => acc + peso * digitos[i], 0);
+    const resto = 11 - (suma % 11);
+    const verificador = resto === 11 ? 1 : resto === 10 ? 0 : resto;
+
+    return verificador === digitos[10];
+  }
 
   respuestasSituacionActual = signal<Record<number, number>>({});
   respuestasEvaluacionActivos = signal<Record<number, number>>({});

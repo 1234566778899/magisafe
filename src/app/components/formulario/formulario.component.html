@@ -1,3 +1,4 @@
+
 <div *ngIf="pasoActual() === -1" class="container main-screen">
   <img
     src="https://storage.googleapis.com/staging.ugel-app.appspot.com/logo_mg.png"
@@ -7,9 +8,17 @@
     <h1>¿Tu empresa está protegida?</h1>
     <p>Evalúa en minutos el nivel de seguridad de tu negocio y descubre qué
       pasos seguir para fortalecerlo.</p>
-    <div class="form-item">
+    <div class="form-item"
+      [ngClass]="{'invalid': rucTouched && !isValidRUC(rucEmpresa)}">
       <label>RUC</label>
-      <input type="text" [(ngModel)]="rucEmpresa">
+      <input type="text"
+        name="ruc"
+        maxlength="11"
+        [(ngModel)]="rucEmpresa"
+        (blur)="rucTouched = true" />
+      <small *ngIf="rucTouched && !isValidRUC(rucEmpresa)">
+        RUC inválido. Debe tener 11 dígitos correctos.
+      </small>
     </div>
     <div class="form-item">
       <label>Nombre de la empresa</label>

@@ -13,6 +13,17 @@
         [ngClass]="{ 'active': currentStep-1 == index }">{{dimension}}
         <i *ngIf="anwers[index]" class="fa-solid fa-check icon-check"></i></div>
     </div>
+    <div class="tab-scroll">
+      <button
+        [disabled]="currentStep <= 1"
+        (click)="setStep(currentStep-1)"><i
+          class="fa-solid fa-chevron-left"></i></button>
+      <h4 style="text-align: center;">{{dimensiones[currentStep-1]}}</h4>
+      <button
+        [disabled]="currentStep >= 9"
+        (click)="setStep(currentStep+1)"><i
+          class="fa-solid fa-chevron-right"></i></button>
+    </div>
     <div class="form-content" #formContent>
       <div class="guide">
         <p>

@@ -4,6 +4,29 @@
   background-color: rgba(255, 255, 255, 0.2);
 }
 
+.tab-scroll {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  padding: 0 20px;
+  height: 200px;
+}
+
+.tab-scroll button {
+  padding: 20px;
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: white;
+}
+
+.tab-scroll button:disabled {
+  color: #666666;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
 .progress {
   height: 30px;
   font-size: 0.8rem;
@@ -55,6 +78,7 @@
 
 @media screen and (max-width: 768px) {
   .tab-bar {
+    display: none;
     width: 100%;
     padding: 40px 0px;
     overflow-x: auto;
