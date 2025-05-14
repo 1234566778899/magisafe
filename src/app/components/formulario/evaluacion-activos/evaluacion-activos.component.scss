@@ -5,7 +5,7 @@
 }
 
 .tab-scroll {
-  display: flex;
+  display: none;
   justify-content: space-between;
   align-items: center;
   color: white;
@@ -73,6 +73,10 @@
 }
 
 @media screen and (max-width: 768px) {
+  .tab-scroll {
+    display: flex;
+  }
+
   .tab-bar {
     display: none;
     width: 100%;
