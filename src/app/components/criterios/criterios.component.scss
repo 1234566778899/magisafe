@@ -1,0 +1,181 @@
+@import "../../../styles.scss";
+
+.evaluation-screen {
+    position: relative;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    overflow: hidden;
+}
+
+.form-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+
+
+.header {
+    position: relative;
+    top: 0;
+    background-color: $primary-color;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: bold;
+    z-index: 10;
+}
+
+.form-content-pdf {
+    background-color: white;
+    color: black;
+}
+
+.guide-pdf {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.bar-container-pdf {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 4rem;
+
+    .bar-section {
+        width: 40%;
+
+        canvas {
+            width: 100%;
+            height: auto !important;
+        }
+
+        h3 {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+    }
+}
+
+.form-content {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+
+    position: relative;
+    z-index: 1;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: $primary-color;
+        border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background: darken($primary-color, 10%);
+    }
+}
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 8px;
+    overflow: hidden;
+    display: table;
+
+    th,
+    td {
+        padding: 12px;
+        text-align: center;
+        border: none;
+        color: #000;
+        font-size: 1rem;
+        vertical-align: middle;
+        border: 1px solid #474747;
+    }
+
+    td:first-child {
+        text-align: left;
+    }
+
+    td:nth-child(n + 2) {
+        text-align: center;
+        vertical-align: middle;
+    }
+}
+
+canvas {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.content {
+    padding: 0px 20px;
+    display: grid;
+    grid-template-columns: 20% 25% 20% 30%;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.content img {
+    width: 100%;
+}
+
+.head {
+    background-color: #D0CECE;
+    font-weight: bold;
+}
+
+.verde {
+    background-color: #33CC33;
+}
+
+.naranja {
+    background-color: #FF9933;
+}
+
+.rojo {
+    background-color: #FF3333;
+}
+
+.content-list {
+    padding: 0px 20px;
+}
+
+.check {
+    transform: scale(1.5);
+}
+
+.btn-export {
+    padding: 15px 10px;
+    font-size: 1.3rem;
+    cursor: pointer;
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.btn-export:hover {
+    background-color: darken($primary-color, 10%);
+}

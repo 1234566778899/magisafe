@@ -5,6 +5,7 @@ import { EvaluacionActivosComponent } from './evaluacion-activos/evaluacion-acti
 import { ResultadosComponent } from './resultados/resultados.component';
 import { RecomendacionesComponent } from './recomendaciones/recomendaciones.component';
 import { FormsModule } from '@angular/forms';
+import { CriteriosComponent } from '../criterios/criterios.component';
 
 @Component({
   selector: 'app-formulario',
@@ -14,7 +15,7 @@ import { FormsModule } from '@angular/forms';
   imports: [CommonModule, FormsModule]
 })
 export class FormularioComponent {
-  pasos = [SituacionActualComponent, ResultadosComponent, EvaluacionActivosComponent, RecomendacionesComponent];
+  pasos = [SituacionActualComponent, ResultadosComponent, EvaluacionActivosComponent, RecomendacionesComponent, CriteriosComponent];
   pasoActual = signal(-1);
   rucEmpresa = '';
   nombreEmpresa = '';
@@ -64,15 +65,15 @@ export class FormularioComponent {
     this.nombreEmpresa = localStorage.getItem('nombreEmpresa') || '';
     this.nombre = localStorage.getItem('nombre') || '';
     this.rol = localStorage.getItem('rol') || '';
-    //this.respuestasEvaluacionActivos = signal<Record<number, number>>(JSON.parse(localStorage.getItem('respuestasEvaluacionActivos') || '{}'));
-    //this.respuestasSituacionActual = signal<Record<number, number>>(JSON.parse(localStorage.getItem('respuestasSituacionActual') || '{}'));
+    // this.respuestasEvaluacionActivos = signal<Record<number, number>>(JSON.parse(localStorage.getItem('respuestasEvaluacionActivos') || '{}'));
+    // this.respuestasSituacionActual = signal<Record<number, number>>(JSON.parse(localStorage.getItem('respuestasSituacionActual') || '{}'));
   }
   iniciarEvaluacion() {
     localStorage.setItem('rucEmpresa', this.rucEmpresa);
     localStorage.setItem('nombreEmpresa', this.nombreEmpresa);
     localStorage.setItem('nombre', this.nombre);
     localStorage.setItem('rol', this.rol);
-    this.pasoActual.set(0);
+    this.pasoActual.set(4);
   }
 
   siguientePaso() {
@@ -80,7 +81,9 @@ export class FormularioComponent {
       this.pasoActual.update(p => p + 1);
     }
   }
-
+  ultimoPaso() {
+    this.pasoActual.set(4)
+  }
   pasoAnterior() {
     if (this.pasoActual() > 0) {
       this.pasoActual.update(p => p - 1);

@@ -484,4 +484,7 @@ export class ResultadosComponent implements AfterViewInit {
   irAFormularioEvaluacionActivos() {
     this.formulario.siguientePaso();
   }
+  irUltimoPaso() {
+    this.formulario.ultimoPaso();
+  }
 }
