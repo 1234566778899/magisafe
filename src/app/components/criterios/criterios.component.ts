@@ -73,7 +73,6 @@ export class CriteriosComponent implements OnInit {
       "Impacto Legal", "Impacto Reputacional", "Justificación", "Controles a implementar"
     ];
 
-    // 2) TÍTULO, FECHA, EVALUADOR
     const pageWidth = doc.internal.pageSize.getWidth();
     const titulo = 'Criterios para definir impacto y probabilidad';
     doc.setFont('helvetica', 'bold');
@@ -95,8 +94,41 @@ export class CriteriosComponent implements OnInit {
       startY: 100,
       head: [columnas],
       body: filas,
-      styles: { fontSize: 8, cellPadding: 2 },
-      headStyles: { fillColor: [6, 74, 136] }
+      styles: {
+        fontSize: 8,
+        cellPadding: 2,
+        textColor: [20, 20, 20],
+        lineColor: [0, 0, 0],
+        lineWidth: 0.1
+      },
+      headStyles: {
+        fillColor: [6, 74, 136],
+        textColor: [245, 245, 245],
+        lineColor: [0, 0, 0],
+        lineWidth: 0.1
+      },
+      didParseCell: function (data) {
+        if (data.section === 'body') {
+          const colIndex = data.column.index;
+          const value = data.cell.raw;
+
+          // Índices según tus columnas:
+          const probabilidadIndex = 2;
+          const financieroIndex = 3;
+          const legalIndex = 4;
+          const reputacionalIndex = 5;
+
+          if ([probabilidadIndex, financieroIndex, legalIndex, reputacionalIndex].includes(colIndex)) {
+            if (value === 'Alto' || value === 'Rojo') {
+              data.cell.styles.fillColor = [255, 0, 0]; // rojo
+            } else if (value === 'Medio' || value === 'Amarillo') {
+              data.cell.styles.fillColor = [255, 165, 0]; // naranja
+            } else if (value === 'Bajo' || value === 'Verde') {
+              data.cell.styles.fillColor = [0, 128, 0]; // verde
+            }
+          }
+        }
+      }
     });
 
     doc.save("criterios_seleccionados.pdf");

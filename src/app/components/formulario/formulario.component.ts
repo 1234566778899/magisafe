@@ -73,7 +73,7 @@ export class FormularioComponent {
     localStorage.setItem('nombreEmpresa', this.nombreEmpresa);
     localStorage.setItem('nombre', this.nombre);
     localStorage.setItem('rol', this.rol);
-    this.pasoActual.set(4);
+    this.pasoActual.set(0);
   }
 
   siguientePaso() {
