@@ -12,6 +12,18 @@
   overflow: hidden;
 }
 
+.niveles {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.niveles table {
+  width: 50%;
+}
+
+
+
 .btn-back {
   position: absolute;
   top: 15px;
