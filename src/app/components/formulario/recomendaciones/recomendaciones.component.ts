@@ -261,7 +261,8 @@ export class RecomendacionesComponent {
         }
       }
       pdf.save('soyunpdf.pdf');
-      location.reload();
+      this.cargando = false;
+      elementToPrint.classList.add('oculto');
       return false;
     });
   }

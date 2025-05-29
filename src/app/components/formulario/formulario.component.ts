@@ -16,7 +16,7 @@ import { CriteriosComponent } from '../criterios/criterios.component';
 })
 export class FormularioComponent {
   pasos = [SituacionActualComponent, ResultadosComponent, EvaluacionActivosComponent, RecomendacionesComponent, CriteriosComponent];
-  pasoActual = signal(-1);
+  pasoActual = signal(3);
   rucEmpresa = '';
   nombreEmpresa = '';
   nombre = '';
@@ -65,8 +65,8 @@ export class FormularioComponent {
     this.nombreEmpresa = localStorage.getItem('nombreEmpresa') || '';
     this.nombre = localStorage.getItem('nombre') || '';
     this.rol = localStorage.getItem('rol') || '';
-    //this.respuestasEvaluacionActivos = signal<Record<number, number>>(JSON.parse(localStorage.getItem('respuestasEvaluacionActivos') || '{}'));
-    //this.respuestasSituacionActual = signal<Record<number, number>>(JSON.parse(localStorage.getItem('respuestasSituacionActual') || '{}'));
+    // this.respuestasEvaluacionActivos = signal<Record<number, number>>(JSON.parse(localStorage.getItem('respuestasEvaluacionActivos') || '{}'));
+    // this.respuestasSituacionActual = signal<Record<number, number>>(JSON.parse(localStorage.getItem('respuestasSituacionActual') || '{}'));
   }
   iniciarEvaluacion() {
     localStorage.setItem('rucEmpresa', this.rucEmpresa);
