@@ -16,7 +16,7 @@ import { CriteriosComponent } from '../criterios/criterios.component';
 })
 export class FormularioComponent {
   pasos = [SituacionActualComponent, ResultadosComponent, EvaluacionActivosComponent, RecomendacionesComponent, CriteriosComponent];
-  pasoActual = signal(3);
+  pasoActual = signal(-1);
   rucEmpresa = '';
   nombreEmpresa = '';
   nombre = '';
