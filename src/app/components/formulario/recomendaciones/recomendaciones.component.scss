@@ -9,6 +9,18 @@ canvas {
   color: black;
 }
 
+.btn-back {
+  position: absolute;
+  top: 15px;
+  left: 10px;
+  padding: 10px 20px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  background: none;
+  color: white;
+  border: none;
+}
+
 .recommendations-screen {
   position: relative;
   background: #030f25;

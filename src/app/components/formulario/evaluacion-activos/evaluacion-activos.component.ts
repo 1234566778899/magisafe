@@ -43,6 +43,9 @@ export class EvaluacionActivosComponent implements OnInit {
     this.errores.update(e => ({ ...e, [preguntaId]: false }));
     localStorage.setItem('respuestasEvaluacionActivos', JSON.stringify(this.respuestas()));
   }
+  goBack() {
+    this.formulario.pasoAnterior();
+  }
 
   todasRespondidas(): boolean {
     return this.preguntasEvaluacionActivos.every(dimension =>

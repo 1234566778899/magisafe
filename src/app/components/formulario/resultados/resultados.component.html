@@ -1,6 +1,9 @@
 <div class="evaluation-screen">
   <div class="form-container">
-    <div class="header">RESULTADOS DE EVALUACIÓN</div>
+    <div class="header">
+      <button (click)="goBack()" class="btn-back"><i
+          class="fa-solid fa-arrow-left"></i></button>
+      RESULTADOS DE EVALUACIÓN</div>
     <div class="form-content">
       <div class="guide">
         <p>
@@ -55,9 +58,6 @@
         <button (click)="irAFormularioEvaluacionActivos()">
           ¿CÓMO MEJORAR?
         </button>
-        <button (click)="irUltimoPaso()">
-          Criterios
-        </button>
       </div>
     </div>
   </div>
@@ -68,12 +68,11 @@
   <div class="form-content-pdf">
     <div class="guide-pdf">
       <p>
-        Hoy {{getFechaHoy()}}, se ha evaluado el nivel de madurez en
-        seguridad de
-        la información de la empresa <strong>{{ formulario.nombreEmpresa
-          }}</strong> (RUC: <strong>{{
-          formulario.rucEmpresa }}</strong>), evaluación realizada por
-        {{formulario.nombre}} con el cargo de {{formulario.rol}}.
+        <strong>Evaluación realizada para:</strong> <br>
+        Empresa: {{ formulario.nombreEmpresa}} <br>
+        RUC: {{formulario.rucEmpresa }} <br>
+        Evaluador: {{formulario.nombre}} – {{formulario.rol}}<br>
+        Fecha: {{getFechaHoy()}}
       </p>
       <p>A continuación, puedes ver tu puntuación general y el desglose según
         los estándares ISO 27001 y NIST.</p>

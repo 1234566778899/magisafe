@@ -487,4 +487,7 @@ export class ResultadosComponent implements AfterViewInit {
   irUltimoPaso() {
     this.formulario.ultimoPaso();
   }
+  goBack() {
+    this.formulario.pasoAnterior();
+  }
 }

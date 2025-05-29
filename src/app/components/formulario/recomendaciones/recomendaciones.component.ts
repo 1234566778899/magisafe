@@ -36,6 +36,12 @@ export class RecomendacionesComponent {
     const today = new Date();
     return this.datePipe.transform(today, 'dd/MM/yyyy')!;
   }
+  irUltimoPaso() {
+    this.formulario.ultimoPaso();
+  }
+  goBack() {
+    this.formulario.pasoAnterior();
+  }
 
   cambiarVista(vista: typeof this.vistaActual) {
     this.vistaActual = vista;

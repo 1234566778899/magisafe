@@ -1,6 +1,9 @@
 <div class="recommendations-screen">
   <div class="recommendations-container">
-    <div class="header" *ngIf="vistaActual === 'inicio'">PASOS A SEGUIR</div>
+    <div class="header" *ngIf="vistaActual === 'inicio'">
+      <button (click)="goBack()" class="btn-back"><i
+          class="fa-solid fa-arrow-left"></i></button>
+      PASOS A SEGUIR</div>
     <div class="header" *ngIf="vistaActual === 'identificar'">IDENTIFICAR</div>
     <div class="header" *ngIf="vistaActual === 'proteger'">PROTEGER</div>
     <div class="header" *ngIf="vistaActual === 'detectar'">DETECTAR</div>
@@ -33,13 +36,14 @@
             </a>
             <a class="function-button" (click)="cambiarVista('proteger')">
               <div class="icon-circle">
-                <img src="/magnifier-icon.svg" alt="Ícono Proteger" />
+                <img src="../../../../assets/proteger.png"
+                  alt="Ícono Proteger" />
               </div>
               <span>PROTEGER</span>
             </a>
             <a class="function-button" (click)="cambiarVista('detectar')">
               <div class="icon-circle">
-                <img src="/magnifier-icon.svg" alt="Ícono Detectar" />
+                <img src="../../../../assets/detect.png" alt="Ícono Detectar" />
               </div>
               <span>DETECTAR</span>
             </a>
@@ -47,13 +51,15 @@
           <div class="bot-row">
             <a class="function-button" (click)="cambiarVista('responder')">
               <div class="icon-circle">
-                <img src="/magnifier-icon.svg" alt="Ícono Responder" />
+                <img src="../../../../assets/responder.png"
+                  alt="Ícono Responder" />
               </div>
               <span>RESPONDER</span>
             </a>
             <a class="function-button" (click)="cambiarVista('recuperar')">
               <div class="icon-circle">
-                <img src="/magnifier-icon.svg" alt="Ícono Recuperar" />
+                <img src="../../../../assets/recovery.png"
+                  alt="Ícono Recuperar" />
               </div>
               <span>RECUPERAR</span>
             </a>
@@ -62,16 +68,12 @@
         <h1 *ngIf="cargando" style="text-align: center;">Cargando..</h1>
         <div class="pdf-export oculto">
           <div class="pdf-title">ESTRATEGIAS POR FUNCIÓN</div>
-          <p class="texto-pdf">
-            Hoy {{getFechaHoy()}}, hemos identificado áreas clave de mejora en
-            la seguridad de la
-            información de la empresa <strong>{{ formulario.nombreEmpresa
-              }}</strong> (RUC: <strong>{{ formulario.rucEmpresa }}</strong>).
-            La evaluación fue realizada por <strong>{{ formulario.nombre
-              }}</strong> con el cargo de <strong>{{ formulario.rol }}</strong>.
-            A continuación, te presentamos recomendaciones personalizadas y
-            pasos prácticos para fortalecer el nivel de madurez en seguridad de
-            la información.
+          <p style="color: black;">
+            <strong> Evaluación realizada para: </strong><br>
+            Empresa: {{ formulario.nombreEmpresa}} <br>
+            RUC: {{formulario.rucEmpresa }} <br>
+            Evaluador: {{formulario.nombre}} – {{formulario.rol}}<br>
+            Fecha: {{getFechaHoy()}}
           </p>
           <div *ngFor="let funcion of estrategiasPorFuncion"
             class="funcion-block">
@@ -108,6 +110,9 @@
 
         <div class="button-container">
           <button (click)="descargarResultados()">DESCARGAR RESULTADOS</button>
+          <button (click)="irUltimoPaso()"
+            style="text-transform: uppercase;">Activos de
+            Información</button>
         </div>
       </ng-container>
 

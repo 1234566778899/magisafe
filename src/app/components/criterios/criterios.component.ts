@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { criteriosData } from '../formulario/utils/criterios';
 import { CommonModule } from '@angular/common';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-
+import { FormularioComponent } from '../formulario/formulario.component';
+import moment from 'moment';
 @Component({
   selector: 'app-criterios',
   standalone: true,
@@ -15,10 +16,11 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 })
 export class CriteriosComponent implements OnInit {
   criterios: any[] = [];
-
+  public formulario = inject(FormularioComponent);
   ngOnInit() {
     this.criterios = criteriosData;
   }
+
   constructor(private http: HttpClient) { }
   getColorClass(color: string): string {
     switch (color) {
@@ -61,10 +63,10 @@ export class CriteriosComponent implements OnInit {
       const base64Logo2 = await this.getBase64FromAsset('./assets/img2.png');
       const base64Logo3 = await this.getBase64FromAsset('./assets/img3.png');
       const base64Logo4 = await this.getBase64FromAsset('./assets/img4.png');
-      doc.addImage(base64Logo1, 'PNG', 12, 23, 60, 60);
-      doc.addImage(base64Logo2, 'PNG', 80, 23, 60, 60);
-      doc.addImage(base64Logo3, 'PNG', 150, 23, 60, 60);
-      doc.addImage(base64Logo4, 'PNG', 223, 23, 60, 60);
+      doc.addImage(base64Logo1, 'PNG', 12, 50, 60, 60);
+      doc.addImage(base64Logo2, 'PNG', 80, 50, 60, 60);
+      doc.addImage(base64Logo3, 'PNG', 150, 50, 60, 60);
+      doc.addImage(base64Logo4, 'PNG', 223, 50, 60, 60);
     } catch (err) {
       console.error("No se pudo cargar la imagen local:", err);
     }
@@ -74,10 +76,23 @@ export class CriteriosComponent implements OnInit {
     ];
 
     const pageWidth = doc.internal.pageSize.getWidth();
-    const titulo = 'Criterios para definir impacto y probabilidad';
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
-    doc.text(titulo, pageWidth / 2, 15, { align: 'center' });
+    doc.setFontSize(16);
+    doc.text('ACTIVOS PARA DEFINIR IMPACTO Y PROBALIDAD', pageWidth / 2, 15, { align: 'center' });
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    // Evaluación realizada para:
+    // Empresa: Big Panda Cholting
+    // RUC: 20174859672
+    // Evaluador: Marcos Chenssen Carlos Aviles – Evaluador de Seguridad de Información
+    // Fecha: 28/05/2025
+    doc.setFont('helvetica', 'bold');
+    doc.text('Evaluación realizada para: ', 10, 23);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Empresa: ' + this.formulario.nombreEmpresa, 10, 28);
+    doc.text('RUC: ' + this.formulario.rucEmpresa, 10, 33);
+    doc.text('Evaluador: ' + this.formulario.nombre + ' - ' + this.formulario.rol, 10, 38);
+    doc.text('Fecha: ' + moment().format('DD/MM/YYYY hh:mm:ss'), 10, 43);
     // --------------------------------------------------
     const filas = seleccionados.map(item => [
       item["N°"],
@@ -91,7 +106,7 @@ export class CriteriosComponent implements OnInit {
     ]);
 
     autoTable(doc, {
-      startY: 100,
+      startY: 125,
       head: [columnas],
       body: filas,
       styles: {
@@ -132,5 +147,8 @@ export class CriteriosComponent implements OnInit {
     });
 
     doc.save("criterios_seleccionados.pdf");
+  }
+  goBack() {
+    this.formulario.pasoAnterior();
   }
 }
