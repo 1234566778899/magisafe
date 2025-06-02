@@ -33,7 +33,7 @@ export class FormularioComponent {
   camposValidos(): boolean {
     return this.isValidRUC(this.rucEmpresa)
       && this.nombreEmpresa.trim().length > 0
-      && this.nombre.trim().length > 0
+      && this.isValidNombre(this.nombre)
       && this.rol.trim().length > 0;
   }
   nivelesEvaluacionActivos = [
@@ -43,7 +43,9 @@ export class FormularioComponent {
     'Implementado en gran medida',
     'Totalmente implementado'
   ];
-
+  isValidNombre(nombre: string): boolean {
+    return /^[a-zA-ZÁÉÍÓÚáéíóúÑñ\s]+$/.test(nombre.trim());
+  }
   isValidRUC(ruc: string): boolean {
     // 1) once dígitos exactos
     if (!/^\d{11}$/.test(ruc)) return false;

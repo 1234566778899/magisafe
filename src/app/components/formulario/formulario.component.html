@@ -24,9 +24,13 @@
       <label>Nombre de la empresa</label>
       <input type="text" [(ngModel)]="nombreEmpresa">
     </div>
-    <div class="form-item">
+    <div class="form-item"
+      [ngClass]="{'invalid': nombre && !isValidNombre(nombre)}">
       <label>Nombre del evaluador</label>
-      <input type="text" [(ngModel)]="nombre">
+      <input type="text" [(ngModel)]="nombre" />
+      <small *ngIf="nombre && !isValidNombre(nombre)">
+        El nombre solo debe contener letras y espacios.
+      </small>
     </div>
     <div class="form-item">
       <label>Rol del evaluador</label>
